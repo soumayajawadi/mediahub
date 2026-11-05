@@ -21,12 +21,15 @@
         @endif
 
         <!-- MESSAGE D'ERREUR (A7MER) -->
-        @if (session('erreur'))
-            <div style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
-                {{ session('erreur') }}
-            </div>
-        @endif
-
+        @if ($errors->any())
+    <div style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
         <!-- HNA YET7AT EL CONTENU MT3 LES PAGES -->
         @yield('contenu')
         

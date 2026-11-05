@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Categorie;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreCategorieRequest;
+use App\Http\Requests\UpdateCategorieRequest;
 
 class CategorieController extends Controller
 {
@@ -18,28 +19,31 @@ class CategorieController extends Controller
         return view('categories.create');
     }
 
-    public function store(Request $request)
+    // HNA RAKKEZ: Beddelna Request b StoreCategorieRequest w 5allina $request->validated()
+    public function store(StoreCategorieRequest $request)
     {
-        Categorie::create($request->only('nom', 'slug'));
+        Categorie::create($request->validated());
         return redirect()->route('categories.index')->with('succes', 'Catégorie créée avec succès.');
     }
 
-    // RAKKEZ: hné beddelna l $categorie w 5allineha $category
-    public function edit(Categorie $category)
+    // HNA RAKKEZ: 5allina $categorie (b ie) bch yetf9a m3a el vue
+    public function edit(Categorie $categorie)
     {
-        return view('categories.edit', compact('category'));
+        return view('categories.edit', compact('categorie'));
     }
 
-    public function update(Request $request, Categorie $category)
+    // HNA RAKKEZ: Beddelna Request b UpdateCategorieRequest w 5allina $categorie
+    public function update(UpdateCategorieRequest $request, Categorie $categorie)
     {
-        $category->update($request->only('nom', 'slug'));
+        $categorie->update($request->validated());
         return redirect()->route('categories.index')->with('succes', 'Catégorie mise à jour avec succès.');
     }
 
-    public function destroy(Categorie $category)
+    // HNA RAKKEZ: 5allina $categorie
+    public function destroy(Categorie $categorie)
     {
         try {
-            $category->delete();
+            $categorie->delete();
             return redirect()->route('categories.index')->with('succes', 'Catégorie supprimée avec succès.');
         } catch (\Exception $e) {
             return redirect()->route('categories.index')->with('erreur', 'Impossible de supprimer cette catégorie car elle contient des publications.');
