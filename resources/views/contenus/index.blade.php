@@ -1,5 +1,7 @@
 @extends('layouts.app')
+
 @section('titre', 'Contenus')
+
 @section('contenu')
     <h1>Contenus multimédias</h1>
     <a href="{{ route('contenus.create') }}">+ Ajouter une publication</a>

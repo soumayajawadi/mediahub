@@ -1,17 +1,19 @@
 @extends('layouts.app')
+
 @section('titre', 'Modifier Publication')
+
 @section('contenu')
     <h1>Modifier la publication</h1>
-    <form method="POST" action="{{ route('contenus.update', $publication) }}">
+    <form method="POST" action="{{ route('contenus.update', $publication) }}" style="margin-top: 20px;">
         @csrf
         @method('PUT')
-        <div>
+        <div style="margin-bottom: 10px;">
             <label>Titre :</label><br>
-            <input type="text" name="titre" value="{{ old('titre', $publication->titre) }}" required style="width: 100%;">
+            <input type="text" name="titre" value="{{ old('titre', $publication->titre) }}" required style="width: 100%; padding: 8px;">
         </div>
-        <div style="margin-top: 10px;">
+        <div style="margin-bottom: 10px;">
             <label>Catégorie :</label><br>
-            <select name="categorie_id" required>
+            <select name="categorie_id" required style="width: 100%; padding: 8px;">
                 @foreach($categories as $cat)
                     <option value="{{ $cat->id }}" {{ $publication->categorie_id == $cat->id ? 'selected' : '' }}>
                         {{ $cat->nom }}
@@ -19,10 +21,11 @@
                 @endforeach
             </select>
         </div>
-        <div style="margin-top: 10px;">
+        <div style="margin-bottom: 10px;">
             <label>Contenu :</label><br>
-            <textarea name="contenu" required style="width: 100%; height: 100px;">{{ old('contenu', $publication->contenu) }}</textarea>
+            <textarea name="contenu" required style="width: 100%; height: 100px; padding: 8px;">{{ old('contenu', $publication->contenu) }}</textarea>
         </div>
-        <button type="submit" style="margin-top: 10px;">Enregistrer</button>
+        <button type="submit" style="padding: 10px 15px; cursor: pointer;">Enregistrer</button>
+        <a href="{{ route('contenus.index') }}" style="margin-left: 10px;">Annuler</a>
     </form>
 @endsection

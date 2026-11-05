@@ -24,20 +24,25 @@ class CategorieController extends Controller
         return redirect()->route('categories.index')->with('succes', 'Catégorie créée avec succès.');
     }
 
-    public function edit(Categorie $categorie) // Liaison implicite
+    // RAKKEZ: hné beddelna l $categorie w 5allineha $category
+    public function edit(Categorie $category)
     {
-        return view('categories.edit', compact('categorie'));
+        return view('categories.edit', compact('category'));
     }
 
-    public function update(Request $request, Categorie $categorie)
+    public function update(Request $request, Categorie $category)
     {
-        $categorie->update($request->only('nom', 'slug'));
+        $category->update($request->only('nom', 'slug'));
         return redirect()->route('categories.index')->with('succes', 'Catégorie mise à jour avec succès.');
     }
 
-    public function destroy(Categorie $categorie)
+    public function destroy(Categorie $category)
     {
-        $categorie->delete();
-        return redirect()->route('categories.index')->with('succes', 'Catégorie supprimée avec succès.');
+        try {
+            $category->delete();
+            return redirect()->route('categories.index')->with('succes', 'Catégorie supprimée avec succès.');
+        } catch (\Exception $e) {
+            return redirect()->route('categories.index')->with('erreur', 'Impossible de supprimer cette catégorie car elle contient des publications.');
+        }
     }
 }
