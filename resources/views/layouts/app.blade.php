@@ -14,6 +14,11 @@
     <!-- Contenu mte3 el pages -->
     <main class="conteneur">
         @yield('contenu')
+        @if (session('succes'))
+    <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+        {{ session('succes') }}
+    </div>
+@endif
     </main>
 
     <!-- Footer -->

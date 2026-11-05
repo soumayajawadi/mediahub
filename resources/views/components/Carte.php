@@ -8,7 +8,7 @@ use Illuminate\View\Component;
 
 class Carte extends Component
 {
-    public function __construct(public string $titre) {}
+    public function __construct(public string $titre) {} // <--- Hédhi mohimma
 
     public function render(): View|Closure|string
     {
