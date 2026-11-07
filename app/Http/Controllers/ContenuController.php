@@ -7,14 +7,14 @@ use App\Models\Categorie;
 use Illuminate\Http\Request;
 use App\Http\Requests\StorePublicationRequest;
 use App\Http\Requests\UpdatePublicationRequest;
+use Illuminate\Support\Facades\Storage;
+
 
 class ContenuController extends Controller
 {
     public function index()
     {
-        $publications = Publication::with(['categorie', 'auteur'])
-                        ->latest()
-                        ->paginate(9); 
+        $publications = Publication::with(['categorie', 'auteur'])->latest()->paginate(9); 
         return view('contenus.index', compact('publications'));
     }
 
@@ -24,16 +24,24 @@ class ContenuController extends Controller
         return view('contenus.create', compact('categories'));
     }
 
-    public function store(StorePublicationRequest $request)
-    {
-        Publication::create([
-            'titre' => $request->validated()['titre'],
-            'contenu' => $request->validated()['contenu'],
-            'categorie_id' => $request->validated()['categorie_id'],
-            'user_id' => auth()->id(), 
-        ]);
-        return redirect()->route('contenus.index')->with('succes', 'Publication créée avec succès.');
+  public function store(StorePublicationRequest $request)
+{
+    $donnees = $request->validated();
+
+    if ($request->hasFile('image')) {
+        $donnees['image'] = $request->file('image')->store('publications', 'public');
     }
+    if ($request->hasFile('fichier_media')) {
+        $fichier = $request->file('fichier_media');
+        $donnees['fichier_media'] = $fichier->store('medias', 'public');
+        $donnees['type_media'] = str_starts_with($fichier->getMimeType(), 'audio') ? 'audio' : 'video';
+    }
+
+    $donnees['user_id'] = auth()->id();
+    Publication::create($donnees);
+
+    return redirect()->route('contenus.index')->with('succes', 'Publication créée avec succès.');
+}
 
     public function show(Publication $publication)
     {
@@ -50,14 +58,31 @@ class ContenuController extends Controller
 
     public function update(UpdatePublicationRequest $request, Publication $publication)
     {
-        $this->authorize('update', $publication); 
-        $publication->update($request->validated());
+        $this->authorize('update', $publication);
+        $donnees = $request->validated();
+
+        if ($request->hasFile('image')) {
+            if ($publication->image) {
+                Storage::disk('public')->delete($publication->image);
+            }
+            $donnees['image'] = $request->file('image')->store('publications', 'public');
+        }
+        
+        $publication->update($donnees);
         return redirect()->route('contenus.show', $publication)->with('succes', 'Publication mise à jour avec succès.');
     }
 
     public function destroy(Publication $publication)
     {
         $this->authorize('delete', $publication);
+        
+        if ($publication->image) {
+            Storage::disk('public')->delete($publication->image);
+        }
+        if ($publication->fichier_media) {
+            Storage::disk('public')->delete($publication->fichier_media);
+        }
+        
         $publication->delete();
         return redirect()->route('contenus.index')->with('succes', 'Publication supprimée avec succès.');
     }

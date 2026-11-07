@@ -4,10 +4,12 @@
 
 @section('contenu')
     <h1>Créer une publication</h1>
-    <form method="POST" action="{{ route('contenus.store') }}" style="margin-top: 20px;">
+    
+    <!-- RAKKEZ: enctype="multipart/form-data" MOHIMMA L'FICHIERS -->
+    <form method="POST" action="{{ route('contenus.store') }}" enctype="multipart/form-data" style="margin-top: 20px;">
         @csrf
         
-        <!-- TITRE (Hné beddelna nom l titre) -->
+        <!-- TITRE -->
         <div style="margin-bottom: 10px;">
             <label>Titre :</label><br>
             <input type="text" name="titre" value="{{ old('titre') }}" required style="width: 100%; padding: 8px;">
@@ -34,6 +36,24 @@
             <label>Contenu :</label><br>
             <textarea name="contenu" required style="width: 100%; height: 100px; padding: 8px;">{{ old('contenu') }}</textarea>
             @error('contenu')
+                <span style="color: red; font-size: 0.9em;">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <!-- IMAGE -->
+        <div style="margin-bottom: 10px;">
+            <label>Image (max 2MB) :</label><br>
+            <input type="file" name="image" accept="image/*">
+            @error('image')
+                <span style="color: red; font-size: 0.9em;">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <!-- MEDIA -->
+        <div style="margin-bottom: 10px;">
+            <label>Média Audio/Vidéo (max 20MB) :</label><br>
+            <input type="file" name="fichier_media" accept="audio/*,video/*">
+            @error('fichier_media')
                 <span style="color: red; font-size: 0.9em;">{{ $message }}</span>
             @enderror
         </div>

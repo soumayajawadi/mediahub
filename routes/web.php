@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 // 1. Routes de base
 Route::get('/', [PageController::class, 'accueil'])->name('accueil');
 Route::get('/a-propos', [PageController::class, 'aPropos'])->name('a-propos');
+Route::get('/connexion', [AuthController::class, 'creerConnexion'])->name('login');
 
 // 2. Categories
 Route::resource('categories', CategorieController::class);

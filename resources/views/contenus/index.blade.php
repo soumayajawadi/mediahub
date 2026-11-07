@@ -12,6 +12,12 @@
     <div style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 20px;">
         @forelse ($publications as $publication)
             <x-carte titre="{{ $publication->titre }}">
+                
+                {{-- HNA EL SORSE: L'IMAGE TET7AT HNA W MICH FI L'ATTRIBUT TITRE --}}
+                @if ($publication->image)
+                    <img src="{{ Storage::url($publication->image) }}" alt="{{ $publication->titre }}" style="max-width: 100%; border-radius: 5px; margin-bottom: 10px;">
+                @endif
+                
                 <p>{{ Str::limit($publication->contenu, 100) }}</p>
                 <small>Catégorie: <strong>{{ $publication->categorie->nom }}</strong> | Auteur: {{ $publication->auteur->name }}</small><br><br>
                 
