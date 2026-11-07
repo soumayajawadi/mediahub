@@ -5,30 +5,32 @@ namespace App\Http\Controllers;
 use App\Models\Publication;
 use App\Models\Categorie;
 use Illuminate\Http\Request;
+use App\Http\Requests\StorePublicationRequest;
+use App\Http\Requests\UpdatePublicationRequest;
 
 class ContenuController extends Controller
 {
     public function index()
-{
-    // Zidna paginate hné bch t5dem $publications->links() fi l'index
-    $publications = \App\Models\Publication::with(['categorie', 'auteur'])
-                    ->latest()
-                    ->paginate(9); 
-    return view('contenus.index', compact('publications'));
-}
+    {
+        $publications = Publication::with(['categorie', 'auteur'])
+                        ->latest()
+                        ->paginate(9); 
+        return view('contenus.index', compact('publications'));
+    }
+
     public function create()
     {
         $categories = Categorie::all();
         return view('contenus.create', compact('categories'));
     }
 
-    public function store(Request $request)
+    public function store(StorePublicationRequest $request)
     {
         Publication::create([
-            'titre' => $request->input('titre'),
-            'contenu' => $request->input('contenu'),
-            'categorie_id' => $request->input('categorie_id'),
-            'user_id' => 1, // Provisoire (semaine 8 bech nbaddlouha b auth)
+            'titre' => $request->validated()['titre'],
+            'contenu' => $request->validated()['contenu'],
+            'categorie_id' => $request->validated()['categorie_id'],
+            'user_id' => auth()->id(), 
         ]);
         return redirect()->route('contenus.index')->with('succes', 'Publication créée avec succès.');
     }
@@ -41,18 +43,21 @@ class ContenuController extends Controller
 
     public function edit(Publication $publication)
     {
+        $this->authorize('update', $publication); 
         $categories = Categorie::all();
         return view('contenus.edit', compact('publication', 'categories'));
     }
 
-    public function update(Request $request, Publication $publication)
+    public function update(UpdatePublicationRequest $request, Publication $publication)
     {
-        $publication->update($request->only('titre', 'contenu', 'categorie_id'));
+        $this->authorize('update', $publication); 
+        $publication->update($request->validated());
         return redirect()->route('contenus.show', $publication)->with('succes', 'Publication mise à jour avec succès.');
     }
 
     public function destroy(Publication $publication)
     {
+        $this->authorize('delete', $publication);
         $publication->delete();
         return redirect()->route('contenus.index')->with('succes', 'Publication supprimée avec succès.');
     }
